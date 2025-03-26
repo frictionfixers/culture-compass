@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Culture Compass for Coaches</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h2 { color: #333; }
+    .slider-container { margin-bottom: 1.5rem; }
+    label { display: block; font-weight: bold; margin-bottom: 0.2rem; }
+    input[type=range] { width: 100%; }
+    .results { background-color: #f3f3f3; padding: 1rem; margin-top: 2rem; border-radius: 8px; }
+    .match { font-weight: bold; color: #007a00; }
+    .mismatch { font-weight: bold; color: #b30000; }
+  </style>
+</head>
+<body>
+
+<h1>🧭 Culture Compass for Coaches</h1>
+
+<p>Rate yourself and your client on the following cultural dimensions. Then click "Compare" to get insights.</p>
+
+<form id="cultureForm">
+  <h2>Your Cultural Preferences</h2>
+  <div class="slider-container">
+    <label>Direct ↔ Indirect Communication</label>
+    <input type="range" name="coach_comm" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Tight ↔ Loose Norms</label>
+    <input type="range" name="coach_norms" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Individualism ↔ Collectivism</label>
+    <input type="range" name="coach_indiv" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Hierarchy ↔ Egalitarianism</label>
+    <input type="range" name="coach_hierarchy" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Task-Oriented ↔ Relationship-Oriented</label>
+    <input type="range" name="coach_task" min="1" max="5" value="3">
+  </div>
+
+  <h2>Your Client's Cultural Preferences</h2>
+  <div class="slider-container">
+    <label>Direct ↔ Indirect Communication</label>
+    <input type="range" name="client_comm" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Tight ↔ Loose Norms</label>
+    <input type="range" name="client_norms" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Individualism ↔ Collectivism</label>
+    <input type="range" name="client_indiv" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Hierarchy ↔ Egalitarianism</label>
+    <input type="range" name="client_hierarchy" min="1" max="5" value="3">
+  </div>
+  <div class="slider-container">
+    <label>Task-Oriented ↔ Relationship-Oriented</label>
+    <input type="range" name="client_task" min="1" max="5" value="3">
+  </div>
+
+  <button type="button" onclick="compare()">Compare</button>
+</form>
+
+<div class="results" id="output"></div>
+
+<script>
+  function compare() {
+    const form = document.forms['cultureForm'];
+    const dims = ['comm', 'norms', 'indiv', 'hierarchy', 'task'];
+    const labels = {
+      comm: "Communication Style",
+      norms: "Norm Tightness",
+      indiv: "Individual vs. Collective",
+      hierarchy: "Power Distance",
+      task: "Task vs. Relationship Focus"
+    };
+
+    let output = '<h2>🧠 Coaching Insights</h2>';
+
+    dims.forEach(dim => {
+      const coachVal = parseInt(form[`coach_${dim}`].value);
+      const clientVal = parseInt(form[`client_${dim}`].value);
+      const diff = Math.abs(coachVal - clientVal);
+
+      if (diff <= 1) {
+        output += `<p><span class="match">✅ ${labels[dim]}:</span> You and your client are aligned. Leverage your shared perspective.</p>`;
+      } else {
+        output += `<p><span class="mismatch">⚠️ ${labels[dim]}:</span> Difference detected. Watch out for:<br/>`;
+
+        switch (dim) {
+          case 'comm':
+            output += (coachVal > clientVal)
+              ? "You may be more indirect. Your client might expect more bluntness — clarify meanings."
+              : "You may be more direct. Consider softening feedback and watching for subtle cues.";
+            break;
+          case 'norms':
+            output += (coachVal > clientVal)
+              ? "You prefer looser structures. Provide more clarity and routines for your client."
+              : "You may be more structured. Flexibility may help your client open up.";
+            break;
+          case 'indiv':
+            output += (coachVal > clientVal)
+              ? "Your client may prioritize group/family. Explore interdependent motivations."
+              : "Be mindful your client may be self-focused. Use 'we' language carefully.";
+            break;
+          case 'hierarchy':
+            output += (coachVal > clientVal)
+              ? "Be aware your client may expect more authority or deference."
+              : "Your client may want equal footing. Avoid top-down approaches.";
+            break;
+          case 'task':
+            output += (coachVal > clientVal)
+              ? "Build more rapport before diving into action steps."
+              : "Your client may value quicker results — watch for signs of impatience.";
+            break;
+        }
+
+        output += '</p>';
+      }
+    });
+
+    document.getElementById('output').innerHTML = output;
+  }
+</script>
+
+</body>
+</html>
