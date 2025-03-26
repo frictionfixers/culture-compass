@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Culture Compass for Coaches</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h1, h2 { color: #333; }
+    .slider-container { margin-bottom: 2rem; }
+    label { display: block; font-weight: bold; margin-bottom: 0.3rem; }
+    .description { font-size: 0.9em; color: #555; margin-bottom: 0.5rem; }
+    input[type=range] { width: 100%; }
+    .scale { display: flex; justify-content: space-between; font-size: 0.85em; margin-top: 0.2rem; }
+    .results { background-color: #f3f3f3; padding: 1rem; margin-top: 2rem; border-radius: 8px; }
+    .match { font-weight: bold; color: #007a00; }
+    .mismatch { font-weight: bold; color: #b30000; }
+  </style>
+</head>
+<body>
+
+<h1>🧭 Culture Compass for Coaches</h1>
+<p>
+  This tool is inspired by the work of Dr. Michele Gelfand on cultural tightness-looseness and the broader field of Cultural Intelligence (CQ). 
+  It helps coaches reflect on their own cultural defaults and compare them to those of their clients, in order to offer more culturally responsive coaching.
+</p>
+
+<form id="cultureForm">
+  <h2>Your Cultural Preferences</h2>
+  <div class="slider-container">
+    <label>Direct ↔ Indirect Communication</label>
+    <div class="description">How do you tend to express disagreement or feedback?</div>
+    <input type="range" name="coach_comm" min="1" max="4" value="2">
+    <div class="scale"><span>1: Very Direct</span><span>2</span><span>3</span><span>4: Very Indirect</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Tight ↔ Loose Norms</label>
+    <div class="description">How important is it to follow rules and conform to expectations?</div>
+    <input type="range" name="coach_norms" min="1" max="4" value="2">
+    <div class="scale"><span>1: Very Tight</span><span>2</span><span>3</span><span>4: Very Loose</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Individualism ↔ Collectivism</label>
+    <div class="description">When making decisions, do you consider personal goals or group/family goals more?</div>
+    <input type="range" name="coach_indiv" min="1" max="4" value="2">
+    <div class="scale"><span>1: Strongly Individual</span><span>2</span><span>3</span><span>4: Strongly Collective</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Hierarchy ↔ Egalitarianism</label>
+    <div class="description">How much do you value hierarchy and respect for authority in relationships?</div>
+    <input type="range" name="coach_hierarchy" min="1" max="4" value="2">
+    <div class="scale"><span>1: Highly Hierarchical</span><span>2</span><span>3</span><span>4: Strongly Egalitarian</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Task ↔ Relationship Orientation</label>
+    <div class="description">Do you prioritize accomplishing tasks or building relationships first?</div>
+    <input type="range" name="coach_task" min="1" max="4" value="2">
+    <div class="scale"><span>1: Task First</span><span>2</span><span>3</span><span>4: Relationship First</span></div>
+  </div>
+
+  <h2>Your Client's Cultural Preferences</h2>
+
+  <div class="slider-container">
+    <label>Direct ↔ Indirect Communication</label>
+    <div class="description">How does your client tend to communicate conflict or opinions?</div>
+    <input type="range" name="client_comm" min="1" max="4" value="2">
+    <div class="scale"><span>1: Very Direct</span><span>2</span><span>3</span><span>4: Very Indirect</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Tight ↔ Loose Norms</label>
+    <div class="description">Does your client operate in a rule-bound or flexible environment?</div>
+    <input type="range" name="client_norms" min="1" max="4" value="2">
+    <div class="scale"><span>1: Very Tight</span><span>2</span><span>3</span><span>4: Very Loose</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Individualism ↔ Collectivism</label>
+    <div class="description">Does your client consider family/community when making decisions?</div>
+    <input type="range" name="client_indiv" min="1" max="4" value="2">
+    <div class="scale"><span>1: Strongly Individual</span><span>2</span><span>3</span><span>4: Strongly Collective</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Hierarchy ↔ Egalitarianism</label>
+    <div class="description">How does your client relate to authority or expect structure?</div>
+    <input type="range" name="client_hierarchy" min="1" max="4" value="2">
+    <div class="scale"><span>1: Highly Hierarchical</span><span>2</span><span>3</span><span>4: Strongly Egalitarian</span></div>
+  </div>
+
+  <div class="slider-container">
+    <label>Task ↔ Relationship Orientation</label>
+    <div class="description">What does your client seem to value more in coaching — results or connection?</div>
+    <input type="range" name="client_task" min="1" max="4" value="2">
+    <div class="scale"><span>1: Task First</span><span>2</span><span>3</span><span>4: Relationship First</span></div>
+  </div>
+
+  <button type="button" onclick="compare()">Compare</button>
+</form>
+
+<div class="results" id="output"></div>
+
+<script>
+  function compare() {
+    const form = document.forms['cultureForm'];
+    const dims = ['comm', 'norms', 'indiv', 'hierarchy', 'task'];
+    const labels = {
+      comm: "Communication Style",
+      norms: "Norm Tightness",
+      indiv: "Individual vs. Collective",
+      hierarchy: "Power Distance",
+      task: "Task vs. Relationship Focus"
+    };
+
+    let output = '<h2>🧠 Coaching Insights</h2>';
+
+    dims.forEach(dim => {
+      const coachVal = parseInt(form[`coach_${dim}`].value);
+      const clientVal = parseInt(form[`client_${dim}`].value);
+      const diff = Math.abs(coachVal - clientVal);
+
+      if (diff <= 1) {
+        output += `<p><span class="match">✅ ${labels[dim]}:</span> You and your client are aligned. Leverage your shared perspective.</p>`;
+      } else {
+        output += `<p><span class="mismatch">⚠️ ${labels[dim]}:</span> Difference detected. Watch out for:<br/>`;
+
+        switch (dim) {
+          case 'comm':
+            output += (coachVal > clientVal)
+              ? "You may be more indirect. Your client might expect bluntness — clarify meanings."
+              : "You may be more direct. Soften tone and pay attention to subtle cues.";
+            break;
+          case 'norms':
+            output += (coachVal > clientVal)
+              ? "You prefer looser norms. Offer more structure and clarity for your client."
+              : "You prefer structure. Allow more flexibility in session flow.";
+            break;
+          case 'indiv':
+            output += (coachVal > clientVal)
+              ? "Your client may prioritize family or group. Include them in the coaching conversation."
+              : "You may be more independent — be mindful not to overlook group dynamics.";
+            break;
+          case 'hierarchy':
+            output += (coachVal > clientVal)
+              ? "Your client may expect a more authoritative coach. Balance guidance with autonomy."
+              : "Your client may expect equality — avoid directive styles.";
+            break;
+          case 'task':
+            output += (coachVal > clientVal)
+              ? "Your client values connection — spend time building rapport before diving into tasks."
+              : "Your client may expect quick outcomes — manage pacing carefully.";
+            break;
+        }
+
+        output += '</p>';
+      }
+    });
+
+    document.getElementById('output').innerHTML = output;
+  }
+</script>
+
+</body>
+</html>
